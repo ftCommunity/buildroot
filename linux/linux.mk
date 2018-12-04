@@ -342,8 +342,8 @@ define LINUX_KCONFIG_FIXUP_CMDS
 	# rebuilt using the linux-rebuild-with-initramfs target.
 	$(if $(BR2_TARGET_ROOTFS_INITRAMFS),
 		mkdir -p $(BINARIES_DIR)
-		touch $(BINARIES_DIR)/rootfs.cpio
-		$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_SOURCE,"$${BR_BINARIES_DIR}/rootfs.cpio",$(@D)/.config)
+		touch $(BINARIES_DIR)/initramfs.cpio
+		$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_SOURCE,"$${BR_BINARIES_DIR}/initramfs.cpio",$(@D)/.config)
 		$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_ROOT_UID,0,$(@D)/.config)
 		$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_ROOT_GID,0,$(@D)/.config))
 	$(if $(BR2_ROOTFS_DEVICE_CREATION_STATIC),,
@@ -594,11 +594,11 @@ endif # BR_BUILDING
 $(eval $(kconfig-package))
 
 # Support for rebuilding the kernel after the cpio archive has
-# been generated.
+# been generated in $(BINARIES_DIR)/initramfs.cpio.
 .PHONY: linux-rebuild-with-initramfs
 linux-rebuild-with-initramfs: $(LINUX_DIR)/.stamp_target_installed
 linux-rebuild-with-initramfs: $(LINUX_DIR)/.stamp_images_installed
-linux-rebuild-with-initramfs: rootfs-cpio
+linux-rebuild-with-initramfs: $(BINARIES_DIR)/initramfs.cpio
 linux-rebuild-with-initramfs:
 	@$(call MESSAGE,"Rebuilding kernel with initramfs")
 	# Build the kernel.
